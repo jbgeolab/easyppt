@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EasyPPT — 클로드 덱 편집기</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23E07A4F'/%3E%3Crect x='14' y='18' width='36' height='22' rx='3' fill='%23FAF7F1'/%3E%3Crect x='26' y='44' width='12' height='4' rx='2' fill='%23FAF7F1'/%3E%3C/svg%3E">
+  <script type="module" crossorigin src="./assets/index-BdXxTJf4.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Cy98dlX-.css">
+</head>
+<body>
+
+  <!-- ═══ 시작 화면 ═══ -->
+  <div id="start">
+    <div class="start-hero">
+      <div class="start-logo">Easy<span>PPT</span></div>
+      <p class="start-sub">클로드 디자인이 만든 HTML 프레젠테이션을 열어 자유롭게 편집·저장·발표하세요.</p>
+    </div>
+    <div class="start-cols">
+      <div class="start-card start-left">
+        <div class="col-title">시작</div>
+        <button id="btn-open" class="action-btn primary">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <b>불러오기</b><span>클로드가 만든 HTML 덱 열기</span>
+        </button>
+        <button id="btn-new" class="action-btn">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><line x1="12" y1="8" x2="12" y2="13"/><line x1="9.5" y1="10.5" x2="14.5" y2="10.5"/><line x1="9" y1="21" x2="15" y2="21"/></svg>
+          <b>새로 시작하기</b><span>빈 프레젠테이션 만들기</span>
+        </button>
+        <div id="dropzone">또는 <b>.html</b> 파일을<br>이 창에 끌어다 놓으세요</div>
+        <button id="btn-sample" class="ghost-btn hidden">샘플 덱 열기 (기후 특성과 지역 판별)</button>
+      </div>
+      <div class="start-card start-right">
+        <div id="cloud-wrap"></div>
+        <div id="recent-wrap" class="hidden">
+          <div class="recent-title">이어서 작업하기</div>
+          <div id="recent-list"></div>
+        </div>
+        <div id="backup-wrap" class="hidden">
+          <div class="recent-title">백업 (저장 직전 상태에서 복구)</div>
+          <div id="backup-list"></div>
+        </div>
+        <div id="start-right-empty">최근에 연 파일이 여기에 표시됩니다.<br>파일을 열면 자동으로 목록이 만들어져요.</div>
+      </div>
+    </div>
+    <div class="start-foot">
+      HTML 저장 · PDF 내보내기 · 발표 모드 · 클로드 번들 무손실 왕복
+      <a id="link-desktop" class="foot-link" href="EasyPPT-setup.exe" download>⬇ 데스크톱 앱 다운로드 (Windows)</a>
+    </div>
+  </div>
+
+  <!-- ═══ 편집기 ═══ -->
+  <div id="app" class="hidden">
+    <header id="topbar">
+      <div class="tb-left">
+        <div id="logo" title="시작 화면으로">Easy<span>PPT</span></div>
+        <button id="btn-home" class="tbtn ic" title="처음 화면으로 (파일 닫기)">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+        </button>
+        <div id="filename"><span id="fname">—</span><span id="dirty-dot" class="hidden" title="저장되지 않은 변경사항"></span></div>
+      </div>
+      <div class="tb-center">
+        <button id="btn-undo" class="tbtn ic" title="실행 취소 (Ctrl+Z)" disabled></button>
+        <button id="btn-redo" class="tbtn ic" title="다시 실행 (Ctrl+Y)" disabled></button>
+        <div class="tb-sep"></div>
+        <button id="btn-add-text" class="tbtn" title="텍스트 상자 추가">텍스트</button>
+        <button id="btn-add-image" class="tbtn" title="이미지 추가 (파일/링크)">이미지</button>
+        <button id="btn-add-video" class="tbtn" title="동영상 추가 (파일/유튜브·비메오 링크)">동영상</button>
+        <button id="btn-shapes" class="tbtn" title="도형·선·화살표 추가">도형 ▾</button>
+        <button id="btn-templates" class="tbtn" title="내 템플릿 슬라이드 삽입">템플릿 ▾</button>
+        <button id="btn-layers" class="tbtn" title="요소 순서 패널 — 앞뒤(z) 순서 확인·조절 (파워포인트의 선택 창)">순서</button>
+        <button id="btn-presenter" class="tbtn" title="발표자 보기 (Alt+F5) — TV/프로젝터엔 슬라이드만, 노트북엔 다음 슬라이드·메모·확대 조작">발표자</button>
+      </div>
+      <div class="tb-right">
+        <button id="btn-cloud" class="tbtn" title="클라우드(GitHub)에 올리기 — 연결된 파일은 저장할 때마다 자동 업로드됩니다">☁</button>
+        <button id="btn-optimize" class="tbtn" title="경량 저장: 켜면 저장·다운로드 시 중복 폰트 형식(eot/ttf/woff)을 제외해 파일이 약 1/3로 줄어듭니다. 렌더링은 동일합니다.">경량</button>
+        <button id="btn-present" class="tbtn present" title="발표 시작 (F5)">▶ 발표</button>
+        <button id="btn-viewer" class="tbtn" title="저장본을 원본 뷰어(새 탭)에서 열기">뷰어</button>
+        <button id="btn-pdf" class="tbtn" title="PDF로 내보내기 (인쇄 대화상자)">PDF</button>
+        <button id="btn-pptx" class="tbtn" title="PPTX로 내보내기 — 슬라이드를 고해상도 이미지로 변환 (노트·숨김 포함)">PPTX</button>
+        <button id="btn-download" class="tbtn" title="다른 이름으로 저장 (Ctrl+Shift+S) — 새 파일로 전환해 계속 편집">다른 이름</button>
+        <button id="btn-save" class="tbtn primary" title="저장 (Ctrl+S)">저장</button>
+      </div>
+    </header>
+
+    <div id="main">
+      <aside id="rail">
+        <div id="rail-head">
+          <span>슬라이드</span>
+          <div class="rail-ops">
+            <button id="sl-add" title="새 슬라이드 추가">＋</button>
+            <button id="sl-dup" title="슬라이드 복제">⧉</button>
+            <button id="sl-skip" title="발표에서 숨김/표시">◐</button>
+            <button id="sl-del" title="슬라이드 삭제">🗑</button>
+          </div>
+        </div>
+        <div id="rail-list"></div>
+      </aside>
+
+      <section id="center">
+        <div id="viewport">
+          <div id="slide-frame">
+            <div id="slide-holder"></div>
+            <div id="sel-overlay" class="hidden">
+              <div class="rh nw" data-dir="nw"></div>
+              <div class="rh n" data-dir="n"></div>
+              <div class="rh ne" data-dir="ne"></div>
+              <div class="rh w" data-dir="w"></div>
+              <div class="rh e" data-dir="e"></div>
+              <div class="rh sw" data-dir="sw"></div>
+              <div class="rh s" data-dir="s"></div>
+              <div class="rh se" data-dir="se" title="크기 조절"></div>
+              <div class="h rot" title="드래그로 회전 (직각 근처 자동 스냅 · Shift=15° 단위)"></div>
+              <div class="h e" title="오른쪽 자르기"></div>
+              <div class="h w" title="왼쪽 자르기"></div>
+              <div class="h n" title="위 자르기"></div>
+              <div class="h s" title="아래 자르기"></div>
+            </div>
+          </div>
+        </div>
+        <footer id="notesbar">
+          <div class="notes-head">
+            <span class="notes-label">발표자 노트</span>
+            <input id="work-memo" type="text" spellcheck="false"
+              placeholder="작업 메모 — 저장 시 파일에 기록되어 다른 PC에서 열 때 표시됩니다 (예: Q3 애니메이션 마무리 필요)">
+          </div>
+          <textarea id="notes" rows="2" placeholder="이 슬라이드의 발표자 노트…" spellcheck="false"></textarea>
+        </footer>
+      </section>
+
+      <aside id="panel">
+        <div id="panel-crumb"></div>
+        <div id="panel-body"><div class="panel-empty">슬라이드에서 요소를 클릭하면<br>여기에서 편집할 수 있습니다.<br><br>더블클릭 → 텍스트 편집<br>드래그 → (자유 배치 요소) 이동</div></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- ═══ 발표 모드 ═══ -->
+  <div id="present-layer" class="hidden">
+    <div id="present-holder"></div>
+    <div id="present-notes" class="hidden"></div>
+    <div id="present-hud"><span id="p-count"></span></div>
+    <div id="p-ctrl">
+      <button data-z="2" title="2배 확대">×2</button>
+      <button data-z="3" title="3배 확대">×3</button>
+      <button data-z="4" title="4배 확대">×4</button>
+      <button data-z="1" title="원래 배율로 (0)">↺</button>
+      <button id="p-fit" title="화면 채우기 방식 전환 (F)">화면</button>
+    </div>
+    <div id="present-flash"></div>
+  </div>
+
+  <input type="file" id="file-input" accept=".html,.htm" hidden>
+  <div id="toast" class="hidden"></div>
+
+</body>
+</html>
